@@ -22,18 +22,18 @@ class Invoice extends Model
 
     public function products()
     {
-        return $this->belongsToMany('App\Products', 'invoice_products');
+        return $this->belongsToMany(Product::class, 'invoice_products');
     }
 
-    public function records()
-    {
-        return $this->hasMany('App\InvoiceRecord');
-    }
+    // public function records()
+    // {
+    //     return $this->hasMany(InvoiceRecord::class);
+    // }
 
-    public function rows()
-    {
-        return $this->hasMany(InvoiceRecord::class);
-    }
+    // public function rows()
+    // {
+    //     return $this->hasMany(InvoiceRecord::class);
+    // }
     public function courier()
     {
         return $this->belongsTo(Courier::class);

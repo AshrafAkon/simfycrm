@@ -2,15 +2,12 @@
 
 namespace Database\Seeders;
 
-use App\Models\ModelRecord;
+
 use App\Permission;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Collection;
-use Illuminate\Container\Container;
-use Illuminate\Support\Facades\File;
-use Illuminate\Database\Eloquent\Model;
 
-class ModelRecordSeeder extends Seeder
+
+class ModelPermissionSeeder extends Seeder
 {
     /**
      * Run the database seeds.

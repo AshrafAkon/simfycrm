@@ -7,7 +7,7 @@ use App\Http\Requests\InvoiceRequest;
 use App\Invoice;
 use App\InvoiceRecord;
 use App\InvoiceStatus;
-use App\Products;
+use App\Product;
 use App\Setting;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -23,10 +23,10 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         $perPage = request('perPage', 250);
-        return view('invoices.index')->withinvoices(Invoice::orderBy('id', 'DESC')->paginate($perPage))
-            ->withtrashed(false)
-            ->withselected($perPage)
-            ->withinvoicestatuses(InvoiceStatus::all(['id', 'status']));
+        return view('invoices.index')->with('invoices', Invoice::orderBy('id', 'DESC')->paginate($perPage))
+            ->with('trashed', false)
+            ->with('selected', $perPage)
+            ->with('invoicestatuses', InvoiceStatus::all(['id', 'status']));
     }
 
     /**
@@ -38,8 +38,8 @@ class InvoiceController extends Controller
     {
 
         return view('invoices.create')
-            ->withcouriers(Courier::all())
-            ->withinvoiceid(false);
+            ->with('couriers', Courier::all())
+            ->with('invoiceid', false);
         // return view('invoices.create');
     }
 
@@ -114,7 +114,7 @@ class InvoiceController extends Controller
     public function show($id)
     {
         return view('invoices.create')
-            ->withinvoiceid($id);
+            ->with('invoiceid', $id);
     }
 
     /**
@@ -126,7 +126,7 @@ class InvoiceController extends Controller
     public function edit($id)
     {
         return view('invoices.create')
-            ->withinvoiceid($id);
+            ->with('invoiceid', $id);
     }
 
     /**
@@ -225,10 +225,10 @@ class InvoiceController extends Controller
 
         $perPage = request('perPage', 25);
 
-        return view('invoices.index')->withinvoices(Invoice::orderBy('id', 'DESC')->onlyTrashed()->paginate($perPage))
-            ->withtrashed(true)
-            ->withselected($perPage)
-            ->withinvoicestatuses(InvoiceStatus::all(['id', 'status']));
+        return view('invoices.index')->with('invoices', Invoice::orderBy('id', 'DESC')->onlyTrashed()->paginate($perPage))
+            ->with('trashed', true)
+            ->with('selected', $perPage)
+            ->with('invoicestatuses', InvoiceStatus::all(['id', 'status']));
     }
 
     public function find_with_phone(Request $request)
@@ -237,8 +237,8 @@ class InvoiceController extends Controller
         if ($request->ajax()) {
             $customers = \App\Customer::where('phone', 'LIKE', '%' . $request->search . "%")->paginate(5);
             if ($customers) {
-                return Response(view('search.invoice_name')->withcustomers($customers)
-                    ->withselected(true));
+                return Response(view('search.invoice_name')->with('customers', $customers)
+                    ->with('selected', true));
             }
         }
     }
@@ -281,15 +281,15 @@ class InvoiceController extends Controller
         return view("invoices.print")
             ->with('main_logo', Setting::where('name', 'main_logo')->first())
             ->with('invoice_addr', Setting::where('name', 'invoice_addr')->first())
-            ->withrows($invoice->rows)
-            ->withcustomer($invoice->customer)
-            ->withcourier($invoice->courier)
-            ->withtotal($invoice->amount)
-            ->withid($invoice->id)
-            ->withdate($invoice->created_at->format('d M y'))
-            ->withsubtotal($invoice->subtotal)
-            ->withpayment($invoice->payment)
-            ->withpaid($invoice->payment == $invoice->amount);
+            ->with('rows', $invoice->rows)
+            ->with('customer', $invoice->customer)
+            ->with('courier', $invoice->courier)
+            ->with('total', $invoice->amount)
+            ->with('id', $invoice->id)
+            ->with('date', $invoice->created_at->format('d M y'))
+            ->with('subtotal', $invoice->subtotal)
+            ->with('payment', $invoice->payment)
+            ->with('paid', $invoice->payment == $invoice->amount);
     }
     public function search_invoice_id()
     {
@@ -304,8 +304,8 @@ class InvoiceController extends Controller
                     $invoices = \App\Invoice::where(request('search_param'), 'LIKE', '%' . $request->search . "%")->paginate(request('perPage', 25));
                     if ($invoices) {
                         return Response(view('invoices.table')
-                            ->withinvoices($invoices)
-                            ->withinvoicestatuses(InvoiceStatus::all(['id', 'status'])));
+                            ->with('invoices', $invoices)
+                            ->with('invoicestatuses', InvoiceStatus::all(['id', 'status'])));
                     }
                     break;
                 default:
@@ -314,8 +314,8 @@ class InvoiceController extends Controller
                     })->paginate(request('perPage', 25));
                     if ($invoices) {
                         return Response(view('invoices.table')
-                            ->withinvoices($invoices)
-                            ->withinvoicestatuses(InvoiceStatus::all(['id', 'status'])));
+                            ->with('invoices', $invoices)
+                            ->with('invoicestatuses', InvoiceStatus::all(['id', 'status'])));
                     }
 
                     break;
